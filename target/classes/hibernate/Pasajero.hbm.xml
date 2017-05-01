@@ -1,0 +1,15 @@
+<!DOCTYPE hibernate-mapping PUBLIC 
+"-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd"> 
+ 
+<hibernate-mapping package="muber.entities">
+	<subclass name="Pasajero" extends="Usuario" discriminator-value="pasajero"  >
+		<property name="creditoDisponible" column="credito_disponible" type="double"/> 
+		
+		<!-- Relación bidireccional con Viaje -->
+		<bag name="viajesRealizadosPasajero" table="viaje_pasajero" inverse="true">
+			<key column="id_pasajero"/>
+			<many-to-many column="id_viaje" class="Viaje"/>
+		</bag>
+    </subclass>
+</hibernate-mapping>

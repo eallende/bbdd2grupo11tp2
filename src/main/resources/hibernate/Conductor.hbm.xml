@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+"-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd"> 
+ 
+<hibernate-mapping package="muber.entities">
+    <subclass name="Conductor" extends="Usuario" discriminator-value="conductor"  >
+		<property name="fechaVencimientoLicencia" column="fecha_vto_licencia" type="timestamp"/> 
+		
+		<!-- Relación bidireccional con Viaje -->
+		<bag name="viajesRealizadosConductor" inverse="true" cascade="all" lazy="false">
+			<key column="conductor_viaje"/>
+			<one-to-many class="Viaje"/>
+		</bag>
+		
+		<!-- Relación unidireccional con Calificación -->
+		<bag name="calificacionesConductor" cascade="all" lazy="false">
+			<key column="id_conductor"/>
+			<one-to-many class="Calificacion"/>
+		</bag>
+    </subclass>
+</hibernate-mapping>

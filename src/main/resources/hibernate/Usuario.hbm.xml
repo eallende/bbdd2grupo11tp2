@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+"-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd"> 
+ 
+<hibernate-mapping package="muber.entities">
+ 
+    <class name="Usuario" table="usuario" dynamic-update="true" >
+        <id name="idUsuario" column="id_usuario">
+            <generator class="increment" />
+        </id>
+
+        <discriminator column="tipo_usuario" not-null="false" type="string" length="10" />
+        
+        <property name="nombreUsuario" column="nombre_usuario"  type="string" /> <!-- unique="true" --> 
+        <property name="password" column="password" type="string" />
+        <property name="fechaIngresoMuber" column="fecha_ingreso_muber" type="timestamp"/> 
+        
+     </class>
+</hibernate-mapping>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+"-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd"> 
+ 
+<hibernate-mapping package="muber.entities">
+ 
+    <class name="Calificacion" table="calificacion" dynamic-update="true" >
+        
+        <id name="idCalificacion" column="id_calificacion">
+            <generator class="increment" />
+        </id>
+
+        <property name="comentario" column="comentario" type="string"/>
+		<property name="puntaje" column="puntaje" type="integer" not-null="true"/> 
+		
+		<!-- Relación unidireccional con Pasajero -->
+        <many-to-one name="pasajero" column="id_pasajero" cascade="all" />
+        
+        <!-- Relación unidireccional con Viaje -->
+        <many-to-one name="viaje" column="id_viaje" cascade="all" />
+    </class>
+</hibernate-mapping>
