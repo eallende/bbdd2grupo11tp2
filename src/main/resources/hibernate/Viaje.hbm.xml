@@ -3,7 +3,7 @@
 "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd"> 
  
-<hibernate-mapping package="muber.entities">
+<hibernate-mapping package="bd2.Muber.model">
 
 		<class name="Viaje" table="viaje" dynamic-update="true" >
 	        <id name="idViaje" column="id_viaje">

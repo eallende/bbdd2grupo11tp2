@@ -2,7 +2,7 @@
 "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd"> 
  
-<hibernate-mapping package="muber.entities">
+<hibernate-mapping package="bd2.Muber.model">
 	<subclass name="Pasajero" extends="Usuario" discriminator-value="pasajero"  >
 		<property name="creditoDisponible" column="credito_disponible" type="double"/> 
 		
