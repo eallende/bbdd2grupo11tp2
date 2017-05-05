@@ -51,5 +51,18 @@ public class Muber {
 		this.viajes = viajes;
 	}
 	
+	public void registrarPasajero(Pasajero pasajero){
+		
+		this.getPasajeros().add(pasajero);
+	}
 	
+	public void registrarConductor(Conductor conductor){
+		
+		this.getConductores().add(conductor);
+	}
+	
+	public void registrarViaje(Viaje viaje){
+		
+		this.getViajes().add(viaje);
+	}
 }

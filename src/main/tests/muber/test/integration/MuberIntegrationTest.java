@@ -74,8 +74,8 @@ public class MuberIntegrationTest {
 //		Pasajero pasajeroMargarita = createPasajeroTest("Margarita5", 1500);
 		
 		//Agregar pasajeros al viaje
-		viaje.getPasajerosViaje().add(pasajeroGerman);
-		viaje.getPasajerosViaje().add(pasajeroAlicia);
+		viaje.agregarPasajero(pasajeroGerman);
+		viaje.agregarPasajero(pasajeroAlicia);
 //		viaje.getPasajerosViaje().add(pasajeroMargarita);
 		
 		//Agregar conductor al viaje
@@ -85,15 +85,15 @@ public class MuberIntegrationTest {
 		updateViaje(viaje);
 		
 		//Agregar conductor a muber
-		muber.getConductores().add((Conductor) conductor);
+		muber.registrarConductor(conductor); 
 		
 		//Agregar pasajeros a muber
-		muber.getPasajeros().add(pasajeroGerman);
-		muber.getPasajeros().add(pasajeroAlicia);
+		muber.registrarPasajero(pasajeroGerman);
+		muber.registrarPasajero(pasajeroAlicia);
 //		muber.getPasajeros().add(pasajeroMargarita);
 		
 		//Agregar viaje a muber
-		muber.getViajes().add(viaje);
+		muber.registrarViaje(viaje);
 		
 		//Actualizar muber
 		updateMuber();
@@ -104,12 +104,12 @@ public class MuberIntegrationTest {
 //		Calificacion calificacionMargarita = createCalificacionTest(pasajeroMargarita, 4, "Viaje bueno", viaje);
 		
 		//Agregar calificaciones al conductor
-		conductor.getCalificacionesConductor().add(calificacionGerman);
-		conductor.getCalificacionesConductor().add(calificacionAlicia);
+		conductor.agregarCalificacion(calificacionGerman);
+		conductor.agregarCalificacion(calificacionAlicia);
 //		conductor.getCalificacionesConductor().add(calificacionMargarita);
 		
 		//Agregar viaje al conductor
-		conductor.getViajesRealizadosConductor().add(viaje);
+		conductor.registrarViajeRealizado(viaje);
 		
 		//Actualizar conductor
 		updateConductor(conductor);
@@ -246,15 +246,12 @@ public class MuberIntegrationTest {
 	private static void finalizarViajeTest(Viaje viaje){
 		
 		log.info("-----------Inicio de operación: finalizarViajeTest---------");
-		List<Pasajero> pasajeros = viaje.getPasajerosViaje();
-		double montoViaje = viaje.getCostoTotal() / viaje.getPasajerosViaje().size();
-		for(Pasajero pasajero : pasajeros){
-			pasajero.setCreditoDisponible(pasajero.getCreditoDisponible() - montoViaje);
+		viaje.finalizarViaje();
+		for(Pasajero pasajero : viaje.getPasajerosViaje()){
 			//Actualizar pasajero
 			updatePasajero(pasajero);
 		}
 		
-		viaje.setEstado(EstadoEnum.FINALIZADO.toString());
 		//Actualizar viaje
 		updateViaje(viaje);
 	}

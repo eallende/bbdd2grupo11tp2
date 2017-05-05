@@ -78,5 +78,25 @@ public class Viaje {
 		this.estado = estado;
 	}
 	
+	public void agregarPasajero(Pasajero pasajero){
+		
+		this.getPasajerosViaje().add(pasajero);
+	}
 	
+	public void finalizarViaje(){
+		
+		if(!EstadoEnum.FINALIZADO.equals(this.getEstado())){
+			List<Pasajero> pasajeros = this.getPasajerosViaje();
+			double montoViaje = this.getCostoTotal() / this.getPasajerosViaje().size();
+			for(Pasajero pasajero : pasajeros){
+				pasajero.setCreditoDisponible(pasajero.getCreditoDisponible() - montoViaje);
+			}
+			this.setEstado(EstadoEnum.FINALIZADO.toString());
+		}
+		
+		
+		
+		
+		
+	}
 }

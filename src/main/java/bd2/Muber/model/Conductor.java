@@ -44,6 +44,17 @@ public class Conductor extends Usuario {
 	    return sb.toString();
 		
 	}
+
+	public void agregarCalificacion(Calificacion calificacion) {
+		
+		this.getCalificacionesConductor().add(calificacion);
+		
+	}
+
+	public void registrarViajeRealizado(Viaje viaje) {
+		
+		this.getViajesRealizadosConductor().add(viaje);
+	}
 	
 	
 }
