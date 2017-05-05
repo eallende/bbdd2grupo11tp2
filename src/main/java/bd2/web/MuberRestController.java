@@ -19,6 +19,7 @@ import bd2.Muber.bo.impl.GenericBOImpl;
 import bd2.Muber.dao.DAOFactory;
 import bd2.Muber.dao.GenericDAO;
 import bd2.Muber.model.Muber;
+import bd2.Muber.util.JsonUtil;
 
 @ControllerAdvice
 @RequestMapping("/services")
@@ -42,21 +43,23 @@ public class MuberRestController {
 
 	@RequestMapping(value = "/pasajeros", method = RequestMethod.GET, produces = "application/json", headers = "Accept=application/json")
 	public String pasajeros() {
-		Map<String, Object> aMap = new HashMap<String, Object>();
-		aMap.put("result", "OK");
+		
 		GenericBO<Muber> bo = getGenericBO(DAOFactory.getMuberDAO());		
 		Muber muber = (Muber) bo.get(1L);
-		if(muber != null)
-			aMap.put("resultingObjects", muber.getPasajeros());
+		if(muber != null)			
+			return JsonUtil.generateJson("OK", muber.getPasajeros());
 		else
-			aMap.put("msg", "No se encontró el objeto muber");
-		return new Gson().toJson(aMap);
+			return JsonUtil.generateJson("OK", "No se encontró el objeto muber");		
 	}
 	
 	@RequestMapping(value = "/conductores", method = RequestMethod.GET, produces = "application/json", headers = "Accept=application/json")
 	public String conductores() {
-		Map<String, Object> aMap = new HashMap<String, Object>();
-		aMap.put("result", "OK");
-		return new Gson().toJson(aMap);
+		
+		GenericBO<Muber> bo = getGenericBO(DAOFactory.getMuberDAO());		
+		Muber muber = (Muber) bo.get(1L);
+		if(muber != null)			
+			return JsonUtil.generateJson("OK", muber.getConductores());
+		else
+			return JsonUtil.generateJson("OK", "No se encontró el objeto muber");
 	}
 }
