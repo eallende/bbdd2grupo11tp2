@@ -21,7 +21,7 @@
 			<many-to-one name="conductorViaje" column="conductor_viaje" cascade="all"/>
 	        
 	        <!-- Relación bidireccional con Pasajero -->
-			<bag name="pasajerosViaje" table="viaje_pasajero" cascade="all">
+			<bag name="pasajerosViaje" table="viaje_pasajero" cascade="all" lazy="false">
 				<key column="id_viaje"/>
 				<many-to-many column="id_pasajero" class="Pasajero"/>
 			</bag>

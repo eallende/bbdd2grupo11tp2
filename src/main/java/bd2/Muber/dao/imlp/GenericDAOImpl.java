@@ -1,8 +1,9 @@
 package bd2.Muber.dao.imlp;
 
+import java.io.Serializable;
+
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 
 import bd2.Muber.dao.GenericDAO;
@@ -66,6 +67,30 @@ public class GenericDAOImpl<T> implements GenericDAO<T> {
 
 	      return entity;
 	   }
+	
+	@Override
+	public T get(Serializable id) throws DAOException {
+		Session session = null;
+		T entity;
+		 try {
+	         session = HibernateUtil.getSessionFactory().openSession();
+	         entity = (T) session.get(this.getPersistentClass(), id);
+	      }
+	      catch (HibernateException e) {
+	         throw new DAOException(e.toString());
+	      }
+	      finally {
+	         if (session != null) {
+	            try {
+	               session.close();
+	            }
+	            catch (HibernateException e) {
+	            }
+	         }
+	      }
+
+	      return entity;
+	}
 
 	public Class<T> getPersistentClass() {
 		return persistentClass;
@@ -74,6 +99,8 @@ public class GenericDAOImpl<T> implements GenericDAO<T> {
 	public void setPersistentClass(Class<T> persistentClass) {
 		this.persistentClass = persistentClass;
 	}
+
+
 	
 	
 }

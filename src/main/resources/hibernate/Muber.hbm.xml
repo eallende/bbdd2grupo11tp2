@@ -11,19 +11,19 @@
             <generator class="increment" />
         </id>
 	<!-- Relación unidireccional con Conductor -->
-        <bag name="conductores" cascade="all" inverse="false"> 
+        <bag name="conductores" cascade="all" inverse="false" lazy="false"> 
         	<key column="id_muber"/>
 			<one-to-many class="Conductor"/>
 		</bag>
 		
 		<!-- Relación unidireccional con Pasajero -->
-		<bag name="pasajeros" cascade="all">
+		<bag name="pasajeros" cascade="all" lazy="false">
 			<key column="id_muber"/>
 			<one-to-many class="Pasajero"/>
 		</bag>
 		
 		<!-- Relación unidireccional con Viaje -->
-		<bag name="viajes" cascade="all">
+		<bag name="viajes" cascade="all" lazy="false">
 			<key column="id_muber"/>
 			<one-to-many class="Viaje"/>
 		</bag>

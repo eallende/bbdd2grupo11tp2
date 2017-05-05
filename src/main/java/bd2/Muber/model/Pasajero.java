@@ -6,7 +6,7 @@ import java.util.List;
 public class Pasajero extends Usuario {
 	
 	private List<Viaje> viajesRealizadosPasajero;
-	private double creditoDisponible;
+	private Double creditoDisponible;
 	
 	public Pasajero(){
 		viajesRealizadosPasajero = new ArrayList<Viaje>();
@@ -20,11 +20,14 @@ public class Pasajero extends Usuario {
 		this.viajesRealizadosPasajero = viajesRealizados;
 	}
 
-	public double getCreditoDisponible() {
-		return creditoDisponible;
+	public Double getCreditoDisponible() {
+		if(creditoDisponible != null)
+			return creditoDisponible;
+		else
+			return 0.0;
 	}
 
-	public void setCreditoDisponible(double creditoDisponible) {
+	public void setCreditoDisponible(Double creditoDisponible) {
 		this.creditoDisponible = creditoDisponible;
 	}
 	
