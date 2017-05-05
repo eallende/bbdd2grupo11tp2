@@ -1,6 +1,8 @@
 package bd2.web;
 
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import org.hibernate.Session;
@@ -18,7 +20,9 @@ import bd2.Muber.bo.GenericBO;
 import bd2.Muber.bo.impl.GenericBOImpl;
 import bd2.Muber.dao.DAOFactory;
 import bd2.Muber.dao.GenericDAO;
+import bd2.Muber.model.Conductor;
 import bd2.Muber.model.Muber;
+import bd2.Muber.model.Pasajero;
 import bd2.Muber.util.JsonUtil;
 
 @ControllerAdvice
@@ -46,10 +50,19 @@ public class MuberRestController {
 		
 		GenericBO<Muber> bo = getGenericBO(DAOFactory.getMuberDAO());		
 		Muber muber = (Muber) bo.get(1L);
-		if(muber != null)			
-			return JsonUtil.generateJson("OK", muber.getPasajeros());
+		
+		if(muber == null || "".equals(muber))			
+			return JsonUtil.generateJson("OK", "No se encontró el objeto muber");
+		
+		List<String> dataList = new LinkedList<>();
+		if(muber.getPasajeros() != null && !muber.getPasajeros().isEmpty()){
+			for (Pasajero pasajero : muber.getPasajeros()) {
+			   dataList.add(pasajero.toString());
+			}
+			return JsonUtil.generateJson("OK", dataList);
+		}
 		else
-			return JsonUtil.generateJson("OK", "No se encontró el objeto muber");		
+			return JsonUtil.generateJson("OK", "No hay pasajeros registrados");		
 	}
 	
 	@RequestMapping(value = "/conductores", method = RequestMethod.GET, produces = "application/json", headers = "Accept=application/json")
@@ -57,9 +70,17 @@ public class MuberRestController {
 		
 		GenericBO<Muber> bo = getGenericBO(DAOFactory.getMuberDAO());		
 		Muber muber = (Muber) bo.get(1L);
-		if(muber != null)			
-			return JsonUtil.generateJson("OK", muber.getConductores());
-		else
+		if(muber == null || "".equals(muber))			
 			return JsonUtil.generateJson("OK", "No se encontró el objeto muber");
+		
+		List<String> dataList = new LinkedList<>();
+		if(muber.getConductores() != null && !muber.getConductores().isEmpty()){
+			for (Conductor conductor : muber.getConductores()) {
+			   dataList.add(conductor.toString());
+			}
+			return JsonUtil.generateJson("OK", dataList);
+		}
+		else
+			return JsonUtil.generateJson("OK", "No hay conductores registrados");
 	}
 }

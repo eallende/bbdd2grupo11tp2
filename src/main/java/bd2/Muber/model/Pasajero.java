@@ -31,6 +31,15 @@ public class Pasajero extends Usuario {
 		this.creditoDisponible = creditoDisponible;
 	}
 	
+	@Override
+	public String toString(){
+		StringBuilder sb = new StringBuilder();				
+        sb.append(" Nombre de Usuario: " + this.getNombreUsuario() +  " ;");
+	    sb.append(" Crédito disponible: " + this.getCreditoDisponible() + " /");
+
+	    return sb.toString();
+		
+	}
 	
 	
 }

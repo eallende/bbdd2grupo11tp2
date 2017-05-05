@@ -35,5 +35,15 @@ public class Conductor extends Usuario {
 		this.calificacionesConductor = calificacionesConductor;
 	}
 	
+	@Override
+	public String toString(){
+		StringBuilder sb = new StringBuilder();				
+        sb.append(" Nombre de Usuario: " + this.getNombreUsuario() +  " ;");
+	    sb.append(" Vencimiento de Licencia: " + this.fechaVencimientoLicencia + " /");
+
+	    return sb.toString();
+		
+	}
+	
 	
 }

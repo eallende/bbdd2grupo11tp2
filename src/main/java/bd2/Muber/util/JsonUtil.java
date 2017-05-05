@@ -1,10 +1,12 @@
 package bd2.Muber.util;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
-public class JsonUtil {
+public class JsonUtil<T> {
 	
 	public static String generateJson(String result, Object aSerializableObject) {
 		Map<String, Object> aMap = new HashMap<String, Object>();
