@@ -56,5 +56,14 @@ public class Conductor extends Usuario {
 		this.getViajesRealizadosConductor().add(viaje);
 	}
 	
-	
+	public Double promedioCalificacion(){
+		
+		List<Calificacion> calificaciones= this.getCalificacionesConductor();
+		double total = 0;
+		for (Calificacion calificacion : calificaciones){
+			total=+calificacion.getPuntaje();
+		}
+		
+		return  (total / calificaciones.size());
+	}
 }

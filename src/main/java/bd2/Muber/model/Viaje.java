@@ -89,7 +89,7 @@ public class Viaje {
 			List<Pasajero> pasajeros = this.getPasajerosViaje();
 			double montoViaje = this.getCostoTotal() / this.getPasajerosViaje().size();
 			for(Pasajero pasajero : pasajeros){
-				pasajero.setCreditoDisponible(pasajero.getCreditoDisponible() - montoViaje);
+				pasajero.descontarCredito(montoViaje);
 			}
 			this.setEstado(EstadoEnum.FINALIZADO.toString());
 		}

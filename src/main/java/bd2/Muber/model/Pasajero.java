@@ -40,6 +40,14 @@ public class Pasajero extends Usuario {
 	    return sb.toString();
 		
 	}
+
+	public void descontarCredito(double montoViaje) {
+		this.setCreditoDisponible(this.getCreditoDisponible() - montoViaje);
+	}
+	
+	public void agregarCredito(double credito) {
+		this.setCreditoDisponible(this.getCreditoDisponible() + credito);
+	}
 	
 	
 }

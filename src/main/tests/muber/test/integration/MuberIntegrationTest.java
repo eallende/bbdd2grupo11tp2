@@ -142,12 +142,8 @@ public class MuberIntegrationTest {
 					log.info("-----------Destino"+ viaje.getDestino()+"---------");
 					log.info("-----------Costo Total"+ viaje.getCostoTotal()+"---------");
 				}
-				List<Calificacion> calificaciones= result.getCalificacionesConductor();
-				int total = 0;
-				for (Calificacion calificacion : calificaciones){
-					total=+calificacion.getPuntaje();
-				}
-				log.info("-----------Calificación promedio"+ total / calificaciones.size()+"---------");
+
+				log.info("-----------Calificación promedio"+ conductor.promedioCalificacion()+"---------");
 				
 			}
 			else
