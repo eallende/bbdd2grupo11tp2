@@ -15,6 +15,7 @@ import bd2.Muber.dao.GenericDAO;
 import bd2.Muber.model.Conductor;
 import bd2.Muber.model.Muber;
 import bd2.Muber.model.Pasajero;
+import bd2.Muber.model.Viaje;
 import bd2.Muber.util.JsonUtil;
 
 @ControllerAdvice
@@ -74,5 +75,28 @@ public class MuberRestController {
 		}
 		else
 			return JsonUtil.generateJson("OK", "No hay conductores registrados");
+	}
+	
+	@RequestMapping(value = "/viajes/abiertos", method = RequestMethod.GET, produces = "application/json", headers = "Accept=application/json")
+	public String viajeAbiertos() {
+		
+		GenericBO<Muber> bo = getGenericBO(DAOFactory.getMuberDAO());		
+		Muber muber = (Muber) bo.get(1L);
+		if(muber == null || "".equals(muber))			
+			return JsonUtil.generateJson("OK", "No se encontró el objeto muber");
+		
+		List<String> dataList = new LinkedList<>();
+		if(muber.getViajes() != null && !muber.getViajes().isEmpty()){
+			for (Viaje viaje : muber.getViajes()) {
+				if(viaje.isAbierto())
+					dataList.add(viaje.toString());
+			}
+			if(!dataList.isEmpty())
+				return JsonUtil.generateJson("OK", dataList);
+			else
+				return JsonUtil.generateJson("OK", "No hay viajes abiertos");
+		}
+		else
+			return JsonUtil.generateJson("OK", "No hay viajes registrados");
 	}
 }

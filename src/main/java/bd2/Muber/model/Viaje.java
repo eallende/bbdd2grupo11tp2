@@ -85,18 +85,33 @@ public class Viaje {
 	
 	public void finalizarViaje(){
 		
-		if(!EstadoEnum.FINALIZADO.equals(this.getEstado())){
+		if(!EstadoEnum.FINALIZADO.toString().equals(this.getEstado())){
 			List<Pasajero> pasajeros = this.getPasajerosViaje();
 			double montoViaje = this.getCostoTotal() / this.getPasajerosViaje().size();
 			for(Pasajero pasajero : pasajeros){
 				pasajero.descontarCredito(montoViaje);
 			}
 			this.setEstado(EstadoEnum.FINALIZADO.toString());
+		}		
+	}
+
+	public boolean isAbierto() {
+		
+		if(EstadoEnum.ABIERTO.toString().equals(this.getEstado())){
+			return true;
 		}
-		
-		
-		
-		
+		return false;
+	}
+	
+	@Override
+	public String toString(){
+		StringBuilder sb = new StringBuilder();				
+        sb.append(" Origen: " + this.getOrigen() +  " ;");
+	    sb.append(" Destino: " + this.getDestino() + " ;");
+	    sb.append(" Costo Total: " + this.getCostoTotal() + " ;");
+	    sb.append(" Cantidad Máx. Pasajeros: " + this.getCantidadMaximaPasajeros() + " ;");
+	    sb.append(" Conductor: " + this.getConductorViaje().getNombreUsuario() + " /");
+	    return sb.toString();
 		
 	}
 }
