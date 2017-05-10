@@ -67,7 +67,15 @@ public class MuberRestController {
 			return JsonUtil.generateJson("OK", "No se encontró el objeto muber");
 		
 		if(muber.getConductores() != null && !muber.getConductores().isEmpty()){
-			return JsonUtil.generateJson("OK", muber.getConductores());
+			
+			//enviando la lista de muber no anda
+//			return JsonUtil.generateJson("OK", muber.getConductores());
+			
+			List<Conductor> conductores = new ArrayList<Conductor>();
+			for (Conductor conductor : muber.getConductores()) {
+				conductores.add(conductor);
+			}
+			return JsonUtil.generateJson("OK", conductores);
 		}
 		else
 			return JsonUtil.generateJson("OK", "No hay conductores registrados");
