@@ -1,11 +1,20 @@
 package bd2.Muber.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Pasajero extends Usuario {
+import com.google.gson.annotations.Expose;
+
+public class Pasajero extends Usuario implements Serializable {
+		
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	
 	private List<Viaje> viajesRealizadosPasajero;
+	@Expose
 	private Double creditoDisponible;
 	
 	public Pasajero(){

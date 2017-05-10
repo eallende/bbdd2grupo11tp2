@@ -1,7 +1,11 @@
 package bd2.web;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -47,12 +51,8 @@ public class MuberRestController {
 		if(muber == null || "".equals(muber))			
 			return JsonUtil.generateJson("OK", "No se encontró el objeto muber");
 		
-		List<String> dataList = new LinkedList<>();
 		if(muber.getPasajeros() != null && !muber.getPasajeros().isEmpty()){
-			for (Pasajero pasajero : muber.getPasajeros()) {
-			   dataList.add(pasajero.toString());
-			}
-			return JsonUtil.generateJson("OK", dataList);
+			return JsonUtil.generateJson("OK", muber.getPasajeros());
 		}
 		else
 			return JsonUtil.generateJson("OK", "No hay pasajeros registrados");		
@@ -66,12 +66,8 @@ public class MuberRestController {
 		if(muber == null || "".equals(muber))			
 			return JsonUtil.generateJson("OK", "No se encontró el objeto muber");
 		
-		List<String> dataList = new LinkedList<>();
 		if(muber.getConductores() != null && !muber.getConductores().isEmpty()){
-			for (Conductor conductor : muber.getConductores()) {
-			   dataList.add(conductor.toString());
-			}
-			return JsonUtil.generateJson("OK", dataList);
+			return JsonUtil.generateJson("OK", muber.getConductores());
 		}
 		else
 			return JsonUtil.generateJson("OK", "No hay conductores registrados");
@@ -85,18 +81,43 @@ public class MuberRestController {
 		if(muber == null || "".equals(muber))			
 			return JsonUtil.generateJson("OK", "No se encontró el objeto muber");
 		
-		List<String> dataList = new LinkedList<>();
 		if(muber.getViajes() != null && !muber.getViajes().isEmpty()){
+			List<Viaje> viajesAbiertos = new ArrayList<Viaje>();
 			for (Viaje viaje : muber.getViajes()) {
 				if(viaje.isAbierto())
-					dataList.add(viaje.toString());
+					viajesAbiertos.add(viaje);
 			}
-			if(!dataList.isEmpty())
-				return JsonUtil.generateJson("OK", dataList);
+			if(!viajesAbiertos.isEmpty())
+				return JsonUtil.generateJson("OK", viajesAbiertos);
 			else
 				return JsonUtil.generateJson("OK", "No hay viajes abiertos");
 		}
 		else
 			return JsonUtil.generateJson("OK", "No hay viajes registrados");
+	}
+	
+	@RequestMapping(value = "/conductores/detalle", method = RequestMethod.POST, produces = "application/json", headers = "Accept=application/json")
+	public String informacionConductor(Long id) {
+		
+		GenericBO<Conductor> bo = getGenericBO(DAOFactory.getConductorDAO());		
+		Conductor conductor = bo.get(id);
+		if(conductor == null || "".equals(conductor))			
+			return JsonUtil.generateJson("OK", "No se encontró el conductor");
+		else{
+			List<Object> dataList = new LinkedList<>();
+			dataList.add(conductor);
+			if(!conductor.getViajesRealizadosConductor().isEmpty()){
+				for(Viaje viaje : conductor.getViajesRealizadosConductor()){
+					dataList.add(viaje);
+				}
+			}
+			else
+				dataList.add("El conductor no tiene viajes realizados");
+			
+			dataList.add("Puntaje Promedio: " + conductor.promedioCalificacion());
+			
+			return JsonUtil.generateJson("OK", dataList);
+		}
+
 	}
 }

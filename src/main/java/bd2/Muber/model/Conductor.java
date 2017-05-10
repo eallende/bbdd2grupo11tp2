@@ -1,13 +1,23 @@
 package bd2.Muber.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class Conductor extends Usuario {
+import com.google.gson.annotations.Expose;
 
+public class Conductor extends Usuario implements Serializable{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
+	@Expose
 	private Date fechaVencimientoLicencia;
 	private List<Viaje> viajesRealizadosConductor;
+	
 	private List<Calificacion> calificacionesConductor;
 	
 	public Conductor(){

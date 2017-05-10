@@ -1,12 +1,23 @@
 package bd2.Muber.model;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class Usuario {
+import com.google.gson.annotations.Expose;
+
+public class Usuario implements Serializable {
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
 	
 	private Long idUsuario;
+	@Expose
 	private String nombreUsuario;
 	private String password;
+	@Expose
 	private Date fechaIngresoMuber;
 	
 	public Usuario(){
