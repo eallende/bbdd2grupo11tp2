@@ -6,9 +6,13 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.websocket.server.PathParam;
+
 import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
@@ -16,10 +20,12 @@ import bd2.Muber.bo.GenericBO;
 import bd2.Muber.bo.impl.GenericBOImpl;
 import bd2.Muber.dao.DAOFactory;
 import bd2.Muber.dao.GenericDAO;
+import bd2.Muber.model.Calificacion;
 import bd2.Muber.model.Conductor;
 import bd2.Muber.model.Muber;
 import bd2.Muber.model.Pasajero;
 import bd2.Muber.model.Viaje;
+import bd2.Muber.util.EstadoEnum;
 import bd2.Muber.util.JsonUtil;
 
 @ControllerAdvice
@@ -104,8 +110,8 @@ public class MuberRestController {
 			return JsonUtil.generateJson("OK", "No hay viajes registrados");
 	}
 	
-	@RequestMapping(value = "/conductores/detalle", method = RequestMethod.POST, produces = "application/json", headers = "Accept=application/json")
-	public String informacionConductor(Long id) {
+	@RequestMapping(value = "/conductores/detalle", method = RequestMethod.GET, produces = "application/json", headers = "Accept=application/json")
+	public String informacionConductor(@PathParam(value = "id") Long id) {
 		
 		GenericBO<Conductor> bo = getGenericBO(DAOFactory.getConductorDAO());		
 		Conductor conductor = bo.get(id);
@@ -128,4 +134,85 @@ public class MuberRestController {
 		}
 
 	}
+	
+	@RequestMapping(value = "/viajes/nuevo", method = RequestMethod.POST, produces = "application/json", headers = "Accept=application/json")
+	public String crearViaje(String origen, String destino, Long conductorId, double costoTotal, int cantidadPasajeros) {
+		
+		GenericBO<Conductor> conductorBO = getGenericBO(DAOFactory.getConductorDAO());	
+		GenericBO<Viaje> viajeBO = getGenericBO(DAOFactory.getViajeDAO());		
+
+		Conductor conductor = conductorBO.get(conductorId);
+		if(conductor == null || "".equals(conductor))			
+			return JsonUtil.generateJson("OK", "No se encontró el conductor");
+		else{
+			Viaje viaje = new Viaje();
+			viaje.setCantidadMaximaPasajeros(cantidadPasajeros);
+			viaje.setOrigen(origen);
+			viaje.setDestino(destino);
+			viaje.setCostoTotal(costoTotal);
+			viaje.setEstado(EstadoEnum.ABIERTO.toString());
+			Viaje nuevoViaje = viajeBO.save(viaje);
+			if(nuevoViaje != null)
+				return JsonUtil.generateJson("OK", "Se creo el viaje con éxito");
+			else
+				return JsonUtil.generateJson("Error", "Ocurrió un error al crear el viaje");
+		}
+
+	}
+	
+	@RequestMapping(value = "/viajes/agregarPasajero", method = RequestMethod.PUT, produces = "application/json", headers = "Accept=application/json")
+	public String agregarPasajero(Long viajeId, Long pasajeroId) {
+		
+		GenericBO<Pasajero> pasajeroBO = getGenericBO(DAOFactory.getPasajeroDAO());	
+		GenericBO<Viaje> viajeBO = getGenericBO(DAOFactory.getViajeDAO());		
+
+		Pasajero pasajero = pasajeroBO.get(pasajeroId);
+		if(pasajero == null || "".equals(pasajero))			
+			return JsonUtil.generateJson("OK", "No se encontró el pasajero");
+		else{
+			Viaje viaje = viajeBO.get(viajeId);
+			if(pasajero == null || "".equals(pasajero))			
+				return JsonUtil.generateJson("OK", "No se encontró el viaje");
+			else{
+				viaje.agregarPasajero(pasajero);
+				if (viajeBO.update(viaje) != null) 
+					return JsonUtil.generateJson("OK", "Se agregó el pasajero al viaje con éxito");
+				else
+					return JsonUtil.generateJson("Error", "Ocurrió un error al agregar el pasajero al viaje");
+			}
+			
+		}
+
+	}
+	
+	@RequestMapping(value = "/viajes/calificar", method = RequestMethod.POST, produces = "application/json", headers = "Accept=application/json")
+	public String calificarViaje(Long viajeId, Long pasajeroId, int puntaje, String comentario) {
+		
+		GenericBO<Pasajero> pasajeroBO = getGenericBO(DAOFactory.getPasajeroDAO());	
+		GenericBO<Viaje> viajeBO = getGenericBO(DAOFactory.getViajeDAO());		
+		GenericBO<Calificacion> calificacionBO = getGenericBO(DAOFactory.getCalificacionDAO());
+
+		Pasajero pasajero = pasajeroBO.get(pasajeroId);
+		if(pasajero == null || "".equals(pasajero))			
+			return JsonUtil.generateJson("OK", "No se encontró el pasajero");
+		else{
+			Viaje viaje = viajeBO.get(viajeId);
+			Calificacion calificacion;
+			if(viaje == null || "".equals(viaje))			
+				return JsonUtil.generateJson("OK", "No se encontró el viaje");
+			else{
+				calificacion = new Calificacion();
+				calificacion.setPasajero(pasajero);
+				calificacion.setViaje(viaje);
+				calificacion.setPuntaje(puntaje);
+				calificacion.setComentario(comentario);
+				calificacion = calificacionBO.save(calificacion);
+				if(calificacion != null)
+					return JsonUtil.generateJson("OK", "Se creo la calificación con éxito");
+				else
+					return JsonUtil.generateJson("Error", "Ocurrió un error al crear la calificación");
+			}
+		}
+	}
+	
 }

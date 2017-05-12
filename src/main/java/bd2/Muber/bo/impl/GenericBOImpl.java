@@ -31,6 +31,28 @@ public class GenericBOImpl<T> implements GenericBO<T>{
 	public void setDao(GenericDAO<T> dao) {
 		this.dao = dao;
 	}
+
+	@Override
+	public T save(T entity) {
+		try {
+			return dao.save(entity);
+		} catch (DAOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	@Override
+	public T update(T entity) {
+		try {
+			return dao.update(entity);
+		} catch (DAOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
 	
 	
 
