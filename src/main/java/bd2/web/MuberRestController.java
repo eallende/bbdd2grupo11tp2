@@ -43,14 +43,6 @@ public class MuberRestController {
 		return genericBO;
 	}
 
-//	protected Session getSession() {
-//		Configuration cfg = new Configuration();
-//		cfg.configure("hibernate.cfg.xml");
-//		SessionFactory factory = cfg.buildSessionFactory();
-//		Session session = factory.openSession();
-//		return session;
-//	}
-
 	@RequestMapping(value = "/pasajeros", method = RequestMethod.GET, produces = "application/json", headers = "Accept=application/json")
 	public String pasajeros() {
 		
@@ -76,9 +68,6 @@ public class MuberRestController {
 			return JsonUtil.generateJson("OK", "No se encontró el objeto muber");
 		
 		if(muber.getConductores() != null && !muber.getConductores().isEmpty()){
-			
-			//enviando la lista de muber no anda
-//			return JsonUtil.generateJson("OK", muber.getConductores());
 			
 			List<Conductor> conductores = new ArrayList<Conductor>();
 			for (Conductor conductor : muber.getConductores()) {
@@ -285,10 +274,15 @@ public class MuberRestController {
 
 			Collections.sort(conductores, Conductor.COMPARADO_POR_PROMEDIO);
 			
+			ArrayList<String> datosConductores = new ArrayList<String>();
 			if(conductores.size() > 10)
-				return JsonUtil.generateJson("OK", conductores.subList(conductores.size() - 10, conductores.size()));
-			else 
-				return JsonUtil.generateJson("OK", conductores); 
+				conductores = conductores.subList(conductores.size() - 10, conductores.size());
+			
+			for(Conductor conductor : conductores){
+				datosConductores.add(conductor.toString());
+			}
+			
+			return JsonUtil.generateJson("OK", datosConductores);
 		}
 		return JsonUtil.generateJson("OK", "No hay conductores registrados");
 	}

@@ -1,10 +1,10 @@
-package muber.test.integration;
+package muber.test.instancia.escenario;
 
-import java.util.Arrays;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 import org.hibernate.SessionFactory;
 
 import bd2.Muber.dao.CalificacionDAO;
@@ -23,78 +23,65 @@ import bd2.Muber.model.Usuario;
 import bd2.Muber.model.Viaje;
 import bd2.Muber.util.EstadoEnum;
 
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
-
-public class MuberIntegrationTest2 {
+public class CrearEscenarioEtapa1 {
 	
-	final static Logger log = Logger.getLogger(MuberIntegrationTest2.class);
+	final static Logger log = Logger.getLogger(CrearEscenarioEtapa1.class);
 	static SessionFactory factory;
 	private static Muber muber;
-
+	
 	public static void main(String[] args) {
 		ConfigureLogger();
-		init();
-		
-		/*
-		//Agregar calificaciones al conductor
-		conductor.getCalificacionesConductor().add(calificacionGerman);
-		conductor.getCalificacionesConductor().add(calificacionAlicia);
-		conductor.getCalificacionesConductor().add(calificacionMargarita);
-		
-		//Agregar viaje al conductor
-		conductor.getViajesRealizadosConductor().add(viaje);
-		
-		//Actualizar conductor
-		updateConductor(conductor);
-		
-		//Descontar crédito a pasajeros.
-		finalizarViajeTest(viaje);
-		
-		getInformacionConductor(conductor);
-*/
+		InstanciarMuber();
+		InstanciarEscenario();
 	}
 
+	
 	private static void ConfigureLogger() {
 		org.apache.log4j.BasicConfigurator.configure();
 		Logger.getRootLogger().setLevel(Level.ERROR);
 		Logger.getRootLogger().setLevel(Level.INFO);
 	}
 	
-	private static void CrearMuber() {
+	private static void InstanciarMuber(){
 		
-		//Crear objeto Muber
-		log.info("-----------Inicio de operación: crearMuber()---------");
-		muber = new Muber();
+		
+		log.info("-----------Inicio de operación: InstanciarMuber()---------");
+		//Recuperar objeto muber
 		MuberDAO muberDAO = DAOFactory.getMuberDAO();
+		
+		//Recuperar objeto muber
 		try {
-			muber = muberDAO.save(muber);
-			log.info("----------Se creo el objeto Muber con id: " + muber.getIdMuber() + "------------");
-			log.info("-----------Fin de operación: crearMuber()---------");
+			muber = muberDAO.get(1L);
+			if(muber != null)
+				log.info("----------Se creo el objeto Muber con id: " + muber.getIdMuber() + "------------");
+			else{
+				log.info("-----------No existe el objeto muber, se crea ---------");
+				muber = new Muber();
+			}
+			
 		} catch (DAOException e) {
-			log.error("*******Error al crear el objeto Muber*********");
+			log.error("*******Error al instanciar el objeto Muber*********");
 			e.toString();
 		}
+	}
+	
+	
+	private static void InstanciarEscenario() {	
 		
-	}	
-
-	private static void init() {
 		//Crear conductor
-		log.info("-----------a. Roberto es un conductor que desea registrar un viaje desde La Plata a Tres Arroyos para 4 pasajeros. El costo total del mismo es de $900.---------");
 		Conductor conductor = createConductorTest();
-				
+		
 		//Crear Viaje
 		Viaje viaje = createViajeTest();
-		
+
 		//Crear pasajeros
-		log.info("-----------b. Tres pasajeros desean sumarse al viaje; son Germán, Alicia y Margarita. Todos los pasajeros tienen un crédito inicial de $1500.---------");
 		Pasajero pasajeroGerman = createPasajeroTest("Germán", 1500);
 		Pasajero pasajeroAlicia = createPasajeroTest("Alicia", 1500);
 		Pasajero pasajeroMargarita = createPasajeroTest("Margarita", 1500);
 		
 		//Agregar pasajeros al viaje
-		viaje.getPasajerosViaje().add(pasajeroGerman);
-		viaje.getPasajerosViaje().add(pasajeroAlicia);
+		viaje.agregarPasajero(pasajeroGerman);
+		viaje.agregarPasajero(pasajeroAlicia);
 		viaje.getPasajerosViaje().add(pasajeroMargarita);
 		
 		//Agregar conductor al viaje
@@ -103,64 +90,46 @@ public class MuberIntegrationTest2 {
 		//Actualizar viaje
 		updateViaje(viaje);
 		
+		//Agregar conductor a muber
+		muber.registrarConductor(conductor); 
+		
+		//Agregar pasajeros a muber
+		muber.registrarPasajero(pasajeroGerman);
+		muber.registrarPasajero(pasajeroAlicia);
+		muber.getPasajeros().add(pasajeroMargarita);
+		
+		//Agregar viaje a muber
+		muber.registrarViaje(viaje);
+		
+		//Actualizar muber
+		updateMuber();
+		
 		//Crear calificaciones
-		log.info("-----------c. Al finalizar el viaje los tres pasajeros califican el mismo. Germán califica con un 5, en cambio Alicia y Margarita lo hacen con puntaje 4. Todos los pasajeros dejaron comentarios al respecto.---------");
 		Calificacion calificacionGerman = createCalificacionTest(pasajeroGerman, 5, "Muy bueno el viaje", viaje);
 		Calificacion calificacionAlicia = createCalificacionTest(pasajeroAlicia, 3, "Viaje regular", viaje);
 		Calificacion calificacionMargarita = createCalificacionTest(pasajeroMargarita, 4, "Viaje bueno", viaje);
 		
-		muber = new Muber();
-		muber.setViajes(Arrays.asList(viaje));
-		/*
-		for(Iterator<Pasajero> i = muber.getViajes().get(0).getPasajerosViaje().iterator(); i.hasNext(); ) {
-		    Pasajero item = i.next();
-		    System.out.println(item.getNombreUsuario());
-		}
-		*/
+		//Agregar calificaciones al conductor
+		conductor.agregarCalificacion(calificacionGerman);
+		conductor.agregarCalificacion(calificacionAlicia);
+		conductor.getCalificacionesConductor().add(calificacionMargarita);
 		
+		//Agregar viaje al conductor
+		conductor.registrarViajeRealizado(viaje);
+		
+		//Actualizar conductor
+		updateConductor(conductor);
+		
+		//Descontar crédito a pasajeros.
+		finalizarViajeTest(viaje);
+		
+		getInformacionConductor(conductor);
+
 	}
 	
-	/**
-	 * Obtener la información de un conductor (nombre de usuario, viajes realizados, puntaje
-	 *	promedio y fecha de licencia)
-	 * @param conductor
-	 */
-	@SuppressWarnings("unused")
-	private static void getInformacionConductor(Conductor conductor) {
-		UsuarioDAO usuarioDAO = DAOFactory.getUsuarioDAO();
-		Conductor result = null;
-		try {
-			result = (Conductor)(usuarioDAO.getUsuario(conductor.getIdUsuario()));
-			if(result != null){
-				log.info("-----------Nombre usuario conductor: " +result.getNombreUsuario()+ "---------");
-				log.info("-----------Fecha vencimiento de licencia: "+result.getFechaVencimientoLicencia()+ "---------");
-				List<Viaje> viajesRealizados = result.getViajesRealizadosConductor();
-				for (Viaje viaje : viajesRealizados){
-					log.info("-----------Viajes Realizados: ---------");
-					log.info("-----------Origen"+ viaje.getOrigen()+"---------");
-					log.info("-----------Destino"+ viaje.getDestino()+"---------");
-					log.info("-----------Costo Total"+ viaje.getCostoTotal()+"---------");
-				}
-				List<Calificacion> calificaciones= result.getCalificacionesConductor();
-				int total = 0;
-				for (Calificacion calificacion : calificaciones){
-					total=+calificacion.getPuntaje();
-				}
-				log.info("-----------Calificación promedio"+ total / calificaciones.size()+"---------");
-				
-			}
-			else
-				log.info("-----------No existe el conductor con id: " +conductor.getIdUsuario()+ "---------");
-		} catch (DAOException e) {
-			log.error("********Ocurrió un error al intentar resuperar el conductor********");
-			e.toString();
-		}
-		
-	}
-
 	private static Conductor createConductorTest() {
 		
-		
+		log.info("-----------Inicio de operación: crearConductorTest---------");
 		Conductor conductor = new Conductor();
 		conductor.setNombreUsuario("Roberto");
 		conductor.setPassword("RobertoConductor");
@@ -202,12 +171,13 @@ public class MuberIntegrationTest2 {
 		
 	}
 	
-	private static Pasajero createPasajeroTest(String nombre, double credito) {
+
+private static Pasajero createPasajeroTest(String nombre, double credito) {
 		
 		log.info("-----------Inicio de operación: createPasajeroTest---------");
 		Pasajero pasajero = new Pasajero();
 		pasajero.setNombreUsuario(nombre);
-		pasajero.setCreditoDisponible(credito);
+		pasajero.getCreditoDisponible();
 		PasajeroDAO pasajeroDAO = DAOFactory.getPasajeroDAO();
 		Pasajero savePasajero = null;
 		try{
@@ -245,15 +215,12 @@ public class MuberIntegrationTest2 {
 	private static void finalizarViajeTest(Viaje viaje){
 		
 		log.info("-----------Inicio de operación: finalizarViajeTest---------");
-		List<Pasajero> pasajeros = viaje.getPasajerosViaje();
-		double montoViaje = viaje.getCostoTotal() / viaje.getPasajerosViaje().size();
-		for(Pasajero pasajero : pasajeros){
-			pasajero.setCreditoDisponible(pasajero.getCreditoDisponible() - montoViaje);
+		viaje.finalizarViaje();
+		for(Pasajero pasajero : viaje.getPasajerosViaje()){
 			//Actualizar pasajero
 			updatePasajero(pasajero);
 		}
 		
-		viaje.setEstado(EstadoEnum.FINALIZADO.toString());
 		//Actualizar viaje
 		updateViaje(viaje);
 	}
@@ -313,4 +280,39 @@ public class MuberIntegrationTest2 {
 			e.toString();
 		}
 	}
+	
+	/**
+	 * Obtener la información de un conductor (nombre de usuario, viajes realizados, puntaje
+	 *	promedio y fecha de licencia)
+	 * @param conductor
+	 */
+	@SuppressWarnings("unused")
+	private static void getInformacionConductor(Conductor conductor) {
+		UsuarioDAO usuarioDAO = DAOFactory.getUsuarioDAO();
+		Conductor result = null;
+		try {
+			result = (Conductor)(usuarioDAO.getUsuario(conductor.getIdUsuario()));
+			if(result != null){
+				log.info("-----------Nombre usuario conductor: " +result.getNombreUsuario()+ "---------");
+				log.info("-----------Fecha vencimiento de licencia: "+result.getFechaVencimientoLicencia()+ "---------");
+				List<Viaje> viajesRealizados = result.getViajesRealizadosConductor();
+				for (Viaje viaje : viajesRealizados){
+					log.info("-----------Viajes Realizados: ---------");
+					log.info("-----------Origen"+ viaje.getOrigen()+"---------");
+					log.info("-----------Destino"+ viaje.getDestino()+"---------");
+					log.info("-----------Costo Total"+ viaje.getCostoTotal()+"---------");
+				}
+
+				log.info("-----------Calificación promedio"+ conductor.promedioCalificacion()+"---------");
+				
+			}
+			else
+				log.info("-----------No existe el conductor con id: " +conductor.getIdUsuario()+ "---------");
+		} catch (DAOException e) {
+			log.error("********Ocurrió un error al intentar resuperar el conductor********");
+			e.toString();
+		}
+		
+	}
+
 }
