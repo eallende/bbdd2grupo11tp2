@@ -42,6 +42,12 @@ public class MuberRestController {
 		genericBO.setDao(dao);
 		return genericBO;
 	}
+	
+	/**
+	 * Lista todos los pasajeros registrados en Muber
+	 * curl http://localhost:8080/MuberRESTful/rest/services/pasajeros
+	 * @return Json
+	 */
 
 	@RequestMapping(value = "/pasajeros", method = RequestMethod.GET, produces = "application/json", headers = "Accept=application/json")
 	public String pasajeros() {
@@ -59,6 +65,11 @@ public class MuberRestController {
 			return JsonUtil.generateJson("OK", "No hay pasajeros registrados");		
 	}
 	
+	/**
+	 * Lista todos los conductores registrados en Muber
+	 * curl http://localhost:8080/MuberRESTful/rest/services/conductores
+	 * @return Json
+	 */
 	@RequestMapping(value = "/conductores", method = RequestMethod.GET, produces = "application/json", headers = "Accept=application/json")
 	public String conductores() {
 		
@@ -68,19 +79,19 @@ public class MuberRestController {
 			return JsonUtil.generateJson("OK", "No se encontró el objeto muber");
 		
 		if(muber.getConductores() != null && !muber.getConductores().isEmpty()){
-			
-			List<Conductor> conductores = new ArrayList<Conductor>();
-			for (Conductor conductor : muber.getConductores()) {
-				conductores.add(conductor);
-			}
-			return JsonUtil.generateJson("OK", conductores);
+			return JsonUtil.generateJson("OK", muber.getConductores());
 		}
 		else
 			return JsonUtil.generateJson("OK", "No hay conductores registrados");
 	}
 	
+	/**
+	 * Lista todos los viajes abiertos en Muber
+	 * curl http://localhost:8080/MuberRESTful/rest/services/viajes/abiertos
+	 * @return Json
+	 */
 	@RequestMapping(value = "/viajes/abiertos", method = RequestMethod.GET, produces = "application/json", headers = "Accept=application/json")
-	public String viajeAbiertos() {
+	public String viajesAbiertos() {
 		
 		GenericBO<Muber> bo = getGenericBO(DAOFactory.getMuberDAO());		
 		Muber muber = (Muber) bo.get(1L);
@@ -102,6 +113,13 @@ public class MuberRestController {
 			return JsonUtil.generateJson("OK", "No hay viajes registrados");
 	}
 	
+	
+	/**
+	 * Obtener la información de un conductor (nombre de usuario, viajes realizados, puntaje promedio y fecha de licencia)
+	 *  curl http://localhost:8080/MuberRESTful/rest/services/conductores/detalle?id={id}
+	 * @param id
+	 * @return Json
+	 */
 	@RequestMapping(value = "/conductores/detalle", method = RequestMethod.GET, produces = "application/json", headers = "Accept=application/json")
 	public String informacionConductor(@PathParam(value = "id") Long id) {
 		
@@ -127,6 +145,16 @@ public class MuberRestController {
 
 	}
 	
+	/**
+	 * Crear un viaje
+	 * curl -d "origen={origen}&destino={destino}&conductorId={conductorId}&costoTotal={costo}&cantidadPasajeros={cantidad}" http://localhost:8080/MuberRESTful/rest/services/viajes/nuevo
+	 * @param origen
+	 * @param destino
+	 * @param conductorId
+	 * @param costoTotal
+	 * @param cantidadPasajeros
+	 * @return Json
+	 */
 	@RequestMapping(value = "/viajes/nuevo", method = RequestMethod.POST, produces = "application/json", headers = "Accept=application/json")
 	public String crearViaje(String origen, String destino, Long conductorId, double costoTotal, int cantidadPasajeros) {
 		
@@ -152,7 +180,10 @@ public class MuberRestController {
 		}
 
 	}
-	/**Así llega pasajero null
+	/**
+	 * Agrega un pasajero a un viaje ya creado
+	 * 
+	 * Así llega pasajero null
 	 * curl -X PUT http://localhost:8080/MuberRESTful/rest/services/viajes/agregarPasajero?viajeId=2&pasajeroId=2
 	*
 	*Así llegan los dos param null
@@ -160,10 +191,10 @@ public class MuberRestController {
 	 * FIXME - Llegan los parámetros nulos!!!
 	 * @param viajeId
 	 * @param pasajeroId
-	 * @return
+	 * @return Json
 	 */
 	@RequestMapping(value = "/viajes/agregarPasajero", method = RequestMethod.PUT, produces = "application/json", headers = "Accept=application/json")
-	public String agregarPasajero(Long viajeId, Long pasajeroId) {
+	public String agregarPasajero(@PathParam(value = "viajeId")Long viajeId, @PathParam(value = "pasajeroId") Long pasajeroId) {
 		
 		GenericBO<Pasajero> pasajeroBO = getGenericBO(DAOFactory.getPasajeroDAO());	
 		GenericBO<Viaje> viajeBO = getGenericBO(DAOFactory.getViajeDAO());		
@@ -187,6 +218,15 @@ public class MuberRestController {
 
 	}
 	
+	/**
+	 * Crea una calificación de un pasajero para un viaje en particular
+	 * curl -d "viajeId={viaje}&pasajeroId={pasajero}&puntaje={puntaje}&comentario={comentario}" http://localhost:8080/MuberRESTful/rest/services/viajes/calificar
+	 * @param viajeId
+	 * @param pasajeroId
+	 * @param puntaje
+	 * @param comentario
+	 * @return Json
+	 */
 	@RequestMapping(value = "/viajes/calificar", method = RequestMethod.POST, produces = "application/json", headers = "Accept=application/json")
 	public String calificarViaje(Long viajeId, Long pasajeroId, int puntaje, String comentario) {
 		
@@ -218,9 +258,10 @@ public class MuberRestController {
 	}
 	
 	/**
-	 * curl -X PUT http://localhost:8080/MuberRESTful/rest/services/viajes/finalizar?viajeId=2
+	 * Finaliza un viaje, si está abierto.
+	 * curl -X PUT http://localhost:8080/MuberRESTful/rest/services/viajes/finalizar?viajeId={idViaje}
 	 * @param viajeId
-	 * @return
+	 * @return Json
 	 */
 	@RequestMapping(value = "/viajes/finalizar", method = RequestMethod.PUT, produces = "application/json", headers = "Accept=application/text")
 	public String finalizarViaje(Long viajeId) {
@@ -239,6 +280,12 @@ public class MuberRestController {
 			
 		}
 	
+	/**
+	 * Cargar crédito a un pasajero en particular
+	 * @param pasajeroId
+	 * @param monto
+	 * @return Json
+	 */
 	@RequestMapping(value = "/pasajeros/cargarCredito", method = RequestMethod.PUT, produces = "application/json", headers = "Accept=application/json")
 	public String cargarCredito(Long pasajeroId, double monto) {
 		
@@ -255,6 +302,11 @@ public class MuberRestController {
 		}
 	}
 	
+	/**
+	 * Lista los 10 conductores mejor calificados que no tengan viajes abiertos registrados
+	 * curl http://localhost:8080/MuberRESTful/rest/services/conductores/top10
+	 * @return Json
+	 */
 	@RequestMapping(value = "/conductores/top10", method = RequestMethod.GET, produces = "application/json", headers = "Accept=application/json")
 	public String conductoresTop10() {
 		
@@ -283,6 +335,7 @@ public class MuberRestController {
 			}
 			
 			return JsonUtil.generateJson("OK", datosConductores);
+
 		}
 		return JsonUtil.generateJson("OK", "No hay conductores registrados");
 	}
