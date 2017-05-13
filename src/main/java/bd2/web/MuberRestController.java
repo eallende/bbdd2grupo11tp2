@@ -9,6 +9,7 @@ import java.util.List;
 import javax.websocket.server.PathParam;
 
 import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -159,9 +160,14 @@ public class MuberRestController {
 		}
 
 	}
-	
+	/**
+	 * FIXME - Llegan los parámetros nulos!!!
+	 * @param viajeId
+	 * @param pasajeroId
+	 * @return
+	 */
 	@RequestMapping(value = "/viajes/agregarPasajero", method = RequestMethod.PUT, produces = "application/json", headers = "Accept=application/json")
-	public String agregarPasajero(Long viajeId, Long pasajeroId) {
+	public String agregarPasajero(@RequestBody Long viajeId, @RequestBody Long pasajeroId) {
 		
 		GenericBO<Pasajero> pasajeroBO = getGenericBO(DAOFactory.getPasajeroDAO());	
 		GenericBO<Viaje> viajeBO = getGenericBO(DAOFactory.getViajeDAO());		
