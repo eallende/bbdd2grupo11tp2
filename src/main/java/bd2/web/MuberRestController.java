@@ -2,6 +2,8 @@ package bd2.web;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -152,6 +154,7 @@ public class MuberRestController {
 			viaje.setDestino(destino);
 			viaje.setCostoTotal(costoTotal);
 			viaje.setEstado(EstadoEnum.ABIERTO.toString());
+			viaje.setConductorViaje(conductor);
 			Viaje nuevoViaje = viajeBO.save(viaje);
 			if(nuevoViaje != null)
 				return JsonUtil.generateJson("OK", "Se creo el viaje con éxito");
@@ -246,5 +249,49 @@ public class MuberRestController {
 			}
 			
 		}
+	
+	@RequestMapping(value = "/pasajeros/cargarCredito", method = RequestMethod.PUT, produces = "application/json", headers = "Accept=application/json")
+	public String cargarCredito(Long pasajeroId, double monto) {
+		
+		GenericBO<Pasajero> pasajeroBO = getGenericBO(DAOFactory.getPasajeroDAO());		
+
+		Pasajero pasajero =pasajeroBO.get(pasajeroId);
+		if(pasajero == null || "".equals(pasajero))			
+				return JsonUtil.generateJson("OK", "No se encontró el pasajero");
+		else{
+			pasajero.agregarCredito(monto);
+			pasajeroBO.save(pasajero);
+			return JsonUtil.generateJson("OK", "Se agregó crédito al pasajero");
+			
+		}
+	}
+	
+	@RequestMapping(value = "/conductores/top10", method = RequestMethod.GET, produces = "application/json", headers = "Accept=application/json")
+	public String conductoresTop10() {
+		
+		GenericBO<Muber> bo = getGenericBO(DAOFactory.getMuberDAO());		
+		Muber muber = (Muber) bo.get(1L);
+		if(muber == null || "".equals(muber))			
+			return JsonUtil.generateJson("OK", "No se encontró el objeto muber");
+		
+		if(muber.getConductores() != null && !muber.getConductores().isEmpty()){
+		
+			List<Conductor> conductores = new ArrayList<Conductor>();
+			for (Conductor conductor : muber.getConductores()) {
+				if(!conductor.tieneViajesAbiertos()){
+					conductores.add(conductor);
+				}
+			}
+
+			Collections.sort(conductores, Conductor.COMPARADO_POR_PROMEDIO);
+			
+			if(conductores.size() > 10)
+				return JsonUtil.generateJson("OK", conductores.subList(conductores.size() - 10, conductores.size()));
+			else 
+				return JsonUtil.generateJson("OK", conductores); 
+		}
+		return JsonUtil.generateJson("OK", "No hay conductores registrados");
+	}
+	
 	
 }

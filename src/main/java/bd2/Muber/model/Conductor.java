@@ -2,6 +2,7 @@ package bd2.Muber.model;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -76,4 +77,19 @@ public class Conductor extends Usuario implements Serializable{
 		
 		return  (total / calificaciones.size());
 	}
+
+	public boolean tieneViajesAbiertos() {
+		for(Viaje viaje : this.getViajesRealizadosConductor()){
+			if(viaje.isAbierto())
+				return true;
+		}
+		return false;
+	}
+
+	
+	public static Comparator<Conductor> COMPARADO_POR_PROMEDIO = new Comparator<Conductor>() {
+        public int compare(Conductor c1, Conductor c2) {
+            return c2.promedioCalificacion().compareTo(c1.promedioCalificacion());
+        }
+    };
 }
