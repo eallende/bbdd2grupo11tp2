@@ -57,6 +57,7 @@ public class CrearEscenarioEtapa1 {
 			else{
 				log.info("-----------No existe el objeto muber, se crea ---------");
 				muber = new Muber();
+				muberDAO.save(muber);
 			}
 			
 		} catch (DAOException e) {
