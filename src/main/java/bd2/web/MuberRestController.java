@@ -10,6 +10,7 @@ import java.util.List;
 
 import javax.websocket.server.PathParam;
 
+import org.hibernate.Hibernate;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,6 +24,7 @@ import bd2.Muber.bo.GenericBO;
 import bd2.Muber.bo.impl.GenericBOImpl;
 import bd2.Muber.dao.DAOFactory;
 import bd2.Muber.dao.GenericDAO;
+import bd2.Muber.dao.PasajeroDAO;
 import bd2.Muber.model.Calificacion;
 import bd2.Muber.model.Conductor;
 import bd2.Muber.model.Muber;
@@ -174,7 +176,7 @@ public class MuberRestController {
 			viaje.setConductorViaje(conductor);
 			Viaje nuevoViaje = viajeBO.save(viaje);
 			if(nuevoViaje != null)
-				return JsonUtil.generateJson("OK", "Se creo el viaje con éxito");
+				return JsonUtil.generateJson("OK", "Se creo el viaje con éxito número: " + nuevoViaje.getIdViaje());
 			else
 				return JsonUtil.generateJson("Error", "Ocurrió un error al crear el viaje");
 		}
@@ -272,7 +274,8 @@ public class MuberRestController {
 		if(viaje == null || "".equals(viaje))			
 				return JsonUtil.generateJson("OK", "No se encontró el viaje");
 		else{
-			if(viaje.finalizarViaje())
+			viaje.finalizarViaje();
+			if(viajeBO.update(viaje) != null)
 				return JsonUtil.generateJson("OK", "El viaje fue finalizado con éxito");
 			else
 				return JsonUtil.generateJson("Error", "No se pudo finalizar un viaje viaje");
@@ -340,5 +343,20 @@ public class MuberRestController {
 		return JsonUtil.generateJson("OK", "No hay conductores registrados");
 	}
 	
+	@RequestMapping(value = "/pasajeros/nuevo", method = RequestMethod.POST, produces = "application/json", headers = "Accept=application/json")
+	public String crearPasajero(String nombre, double credito) {
+			
+		GenericBO<Pasajero> pasajeroBO = getGenericBO(DAOFactory.getPasajeroDAO());	
+	
+		Pasajero pasajero = new Pasajero();
+		pasajero.setNombreUsuario(nombre);
+		pasajero.setCreditoDisponible(credito);;
+		Pasajero nuevoPasajero = null;
+		nuevoPasajero = pasajeroBO.save(pasajero);
+		if(nuevoPasajero != null)
+			return JsonUtil.generateJson("OK", "Se creo el pasajero con éxito número: " + pasajero.getIdUsuario());
+		else
+			return JsonUtil.generateJson("Error", "Ocurrió un error al crear el pasajero");
+	}
 	
 }
