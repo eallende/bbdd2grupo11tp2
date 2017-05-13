@@ -100,7 +100,7 @@ public class Viaje implements Serializable{
 		this.getPasajerosViaje().add(pasajero);
 	}
 	
-	public void finalizarViaje(){
+	public boolean finalizarViaje(){
 		
 		if(!EstadoEnum.FINALIZADO.toString().equals(this.getEstado())){
 			List<Pasajero> pasajeros = this.getPasajerosViaje();
@@ -109,7 +109,9 @@ public class Viaje implements Serializable{
 				pasajero.descontarCredito(montoViaje);
 			}
 			this.setEstado(EstadoEnum.FINALIZADO.toString());
-		}		
+			return true;
+		}
+		return false;
 	}
 
 	public boolean isAbierto() {

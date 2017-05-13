@@ -160,14 +160,18 @@ public class MuberRestController {
 		}
 
 	}
-	/**
+	/**Así llega pasajero null
+	 * curl -X PUT http://localhost:8080/MuberRESTful/rest/services/viajes/agregarPasajero?viajeId=2&pasajeroId=2
+	*
+	*Así llegan los dos param null
+	*curl -X PUT -d "viajeId=2&pasajeroId=2" http://localhost:8080/MuberRESTful/rest/services/viajes/agregarPasajero
 	 * FIXME - Llegan los parámetros nulos!!!
 	 * @param viajeId
 	 * @param pasajeroId
 	 * @return
 	 */
 	@RequestMapping(value = "/viajes/agregarPasajero", method = RequestMethod.PUT, produces = "application/json", headers = "Accept=application/json")
-	public String agregarPasajero(@RequestBody Long viajeId, @RequestBody Long pasajeroId) {
+	public String agregarPasajero(Long viajeId, Long pasajeroId) {
 		
 		GenericBO<Pasajero> pasajeroBO = getGenericBO(DAOFactory.getPasajeroDAO());	
 		GenericBO<Viaje> viajeBO = getGenericBO(DAOFactory.getViajeDAO());		
@@ -220,5 +224,27 @@ public class MuberRestController {
 			}
 		}
 	}
+	
+	/**
+	 * curl -X PUT http://localhost:8080/MuberRESTful/rest/services/viajes/finalizar?viajeId=2
+	 * @param viajeId
+	 * @return
+	 */
+	@RequestMapping(value = "/viajes/finalizar", method = RequestMethod.PUT, produces = "application/json", headers = "Accept=application/text")
+	public String finalizarViaje(Long viajeId) {
+		
+		GenericBO<Viaje> viajeBO = getGenericBO(DAOFactory.getViajeDAO());		
+
+		Viaje viaje = viajeBO.get(viajeId);
+		if(viaje == null || "".equals(viaje))			
+				return JsonUtil.generateJson("OK", "No se encontró el viaje");
+		else{
+			if(viaje.finalizarViaje())
+				return JsonUtil.generateJson("OK", "El viaje fue finalizado con éxito");
+			else
+				return JsonUtil.generateJson("Error", "No se pudo finalizar un viaje viaje");
+			}
+			
+		}
 	
 }
