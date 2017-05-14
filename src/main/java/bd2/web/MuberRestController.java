@@ -148,7 +148,7 @@ public class MuberRestController {
 	}
 	
 	/**
-	 * Crear un viaje
+	 * Crea un viaje
 	 * curl -d "origen={origen}&destino={destino}&conductorId={conductorId}&costoTotal={costo}&cantidadPasajeros={cantidad}" http://localhost:8080/MuberRESTful/rest/services/viajes/nuevo
 	 * @param origen
 	 * @param destino
@@ -184,13 +184,7 @@ public class MuberRestController {
 	}
 	/**
 	 * Agrega un pasajero a un viaje ya creado
-	 * 
-	 * Así llega pasajero null
 	 * curl -X PUT http://localhost:8080/MuberRESTful/rest/services/viajes/agregarPasajero?viajeId=2&pasajeroId=2
-	*
-	*Así llegan los dos param null
-	*curl -X PUT -d "viajeId=2&pasajeroId=2" http://localhost:8080/MuberRESTful/rest/services/viajes/agregarPasajero
-	 * FIXME - Llegan los parámetros nulos!!!
 	 * @param viajeId
 	 * @param pasajeroId
 	 * @return Json
@@ -285,13 +279,13 @@ public class MuberRestController {
 	
 	/**
 	 * Cargar crédito a un pasajero en particular
+	 * curl -X PUT http://localhost:8080/MuberRESTful/rest/services/pasajeros/cargarCredito?pasajeroId=4&monto=4000
 	 * @param pasajeroId
 	 * @param monto
 	 * @return Json
 	 */
-	@RequestMapping(value = "/pasajeros/cargarCredito", method = RequestMethod.PUT, produces = "application/json", headers = "Accept=application/json")
-	public String cargarCredito(Long pasajeroId, double monto) {
-		
+	@RequestMapping(value = "/pasajeros/cargarCredito", method = RequestMethod.PUT, produces = "application/json")
+	public String cargarCredito(@PathParam(value="pasajeroId")Long pasajeroId, @PathParam(value="monto") double monto) {
 		GenericBO<Pasajero> pasajeroBO = getGenericBO(DAOFactory.getPasajeroDAO());		
 
 		Pasajero pasajero =pasajeroBO.get(pasajeroId);
@@ -343,6 +337,13 @@ public class MuberRestController {
 		return JsonUtil.generateJson("OK", "No hay conductores registrados");
 	}
 	
+	/**
+	 * Crea un pasajero
+	 * curl -d "nombre=Hugo&credito=2300" http://localhost:8080/MuberRESTful/rest/services/pasajeros/nuevo
+	 * @param nombre
+	 * @param credito
+	 * @return Json
+	 */
 	@RequestMapping(value = "/pasajeros/nuevo", method = RequestMethod.POST, produces = "application/json", headers = "Accept=application/json")
 	public String crearPasajero(String nombre, double credito) {
 			

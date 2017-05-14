@@ -15,9 +15,6 @@ public class JsonUtil<T> {
 		Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
 		return	gson.toJson(aMap);
 		
-		//Así no funciona con los objetos que vienen desde la base
-//		return new Gson().toJson(aMap, aSerializableObject.getClass());
-		
 	}
 	
 
