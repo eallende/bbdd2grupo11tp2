@@ -1,0 +1,38 @@
+Escenario 2:
+a. Se crea un nuevo viaje de Córdoba a Mar del Plata con el conductor Roberto (existente, de la Etapa 1). El costo es de $3500.
+-no dice para cuántos pasajeros, pusimos 4.
+
+Llamada: 
+curl -d "origen=Córdoba&destino=Mar del Plata&conductorId=1&costoTotal=3500&cantidadPasajeros=4" http://localhost:8080/MuberRESTful/rest/services/viajes/nuevo
+
+
+b. Margarita se suma al viaje, pero antes suma $4000 a su crédito. Un nuevo pasajero, Hugo, con un crédito inicial de $2300 se suma al viaje también.
+
+Agregar crédito a Margarita:
+Llamado: 
+curl -X PUT http://localhost:8080/MuberRESTful/rest/services/pasajeros/cargarCredito/4/4000
+-Donde 4 es el id de pasajero, y 4000 es el monto.
+
+Agregar a Margarita al viaje:
+Llamado: 
+curl -X PUT http://localhost:8080/MuberRESTful/rest/services/viajes/agregarPasajero/2/4
+-Donde 2 es el id del viaje, y 4 es el id del pasajero.
+
+Crear pasajero Hugo: 
+curl -d "nombre=Hugo&credito=2300" http://localhost:8080/MuberRESTful/rest/services/pasajeros/nuevo
+
+Agregar a hugo al viaje:
+Llamado: 
+curl -X PUT http://localhost:8080/MuberRESTful/rest/services/viajes/agregarPasajero/2/5
+
+
+c. Al finalizar el viaje los dos pasajeros califican el mismo.Margarita califica con un 4, y Hugo con un 5. Ambos dejan comentarios al respecto.
+
+curl -d "viajeId=2&pasajeroId=5&puntaje=5&comentario=Excelente viaje" http://localhost:8080/MuberRESTful/rest/services/viajes/calificar
+
+curl -d "viajeId=2&pasajeroId=4&puntaje=4&comentario=Buen viaje" http://localhost:8080/MuberRESTful/rest/services/viajes/calificar
+
+
+d. Al finalizar el viaje se realizan los descuentos correspondientes al crédito de los dos pasajeros.
+
+curl -X PUT http://localhost:8080/MuberRESTful/rest/services/viajes/finalizar?viajeId=2
