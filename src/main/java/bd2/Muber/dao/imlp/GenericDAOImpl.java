@@ -1,6 +1,9 @@
 package bd2.Muber.dao.imlp;
 
 import java.io.Serializable;
+import java.util.List;
+
+import javax.persistence.Query;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -90,6 +93,30 @@ public class GenericDAOImpl<T> implements GenericDAO<T> {
 	      }
 
 	      return entity;
+	}
+	
+	@Override
+	public List<T> getAll() throws DAOException {
+		Session session = null;
+		 try {
+	         session = HibernateUtil.getSessionFactory().openSession();
+	         
+	         org.hibernate.Query query = session.createQuery("from " + this.getPersistentClass().getName());
+	 		 return (List<T>)query.list();
+	      }
+	      catch (HibernateException e) {
+	         throw new DAOException(e.toString());
+	      }
+	      finally {
+	         if (session != null) {
+	            try {
+	               session.close();
+	            }
+	            catch (HibernateException e) {
+	            }
+	         }
+	      }
+
 	}
 
 	public Class<T> getPersistentClass() {

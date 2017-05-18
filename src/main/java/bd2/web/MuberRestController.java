@@ -14,11 +14,14 @@ import org.hibernate.Hibernate;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+
+import com.sun.org.glassfish.gmbal.ParameterNames;
 
 import bd2.Muber.bo.GenericBO;
 import bd2.Muber.bo.impl.GenericBOImpl;
@@ -27,8 +30,10 @@ import bd2.Muber.dao.GenericDAO;
 import bd2.Muber.dao.PasajeroDAO;
 import bd2.Muber.model.Calificacion;
 import bd2.Muber.model.Conductor;
+import bd2.Muber.model.Credito;
 import bd2.Muber.model.Muber;
 import bd2.Muber.model.Pasajero;
+import bd2.Muber.model.Usuario;
 import bd2.Muber.model.Viaje;
 import bd2.Muber.util.EstadoEnum;
 import bd2.Muber.util.JsonUtil;
@@ -75,13 +80,21 @@ public class MuberRestController {
 	@RequestMapping(value = "/conductores", method = RequestMethod.GET, produces = "application/json", headers = "Accept=application/json")
 	public String conductores() {
 		
-		GenericBO<Muber> bo = getGenericBO(DAOFactory.getMuberDAO());		
-		Muber muber = (Muber) bo.get(1L);
-		if(muber == null || "".equals(muber))			
-			return JsonUtil.generateJson("OK", "No se encontró el objeto muber");
+//		GenericBO<Muber> bo = getGenericBO(DAOFactory.getMuberDAO());		
+//		Muber muber = (Muber) bo.get(1L);
+//		if(muber == null || "".equals(muber))			
+//			return JsonUtil.generateJson("OK", "No se encontró el objeto muber");
+//		
+//		if(muber.getConductores() != null && !muber.getConductores().isEmpty()){
+//			return JsonUtil.generateJson("OK", muber.getConductores());
+//		}
+//		else
+//			return JsonUtil.generateJson("OK", "No hay conductores registrados");
 		
-		if(muber.getConductores() != null && !muber.getConductores().isEmpty()){
-			return JsonUtil.generateJson("OK", muber.getConductores());
+		GenericBO<Conductor> bo = getGenericBO(DAOFactory.getConductorDAO());
+		List<Conductor> conductores = bo.getAll();
+		if(conductores != null && !conductores.isEmpty()){
+			return JsonUtil.generateJson("OK", conductores);
 		}
 		else
 			return JsonUtil.generateJson("OK", "No hay conductores registrados");
@@ -184,13 +197,13 @@ public class MuberRestController {
 	}
 	/**
 	 * Agrega un pasajero a un viaje ya creado
-	 * curl -X PUT http://localhost:8080/MuberRESTful/rest/services/viajes/agregarPasajero?viajeId=2&pasajeroId=2
+	 * curl -X PUT http://localhost:8080/MuberRESTful/rest/services/viajes/agregarPasajero/1/4
 	 * @param viajeId
 	 * @param pasajeroId
 	 * @return Json
 	 */
-	@RequestMapping(value = "/viajes/agregarPasajero", method = RequestMethod.PUT, produces = "application/json", headers = "Accept=application/json")
-	public String agregarPasajero(@PathParam(value = "viajeId")Long viajeId, @PathParam(value = "pasajeroId") Long pasajeroId) {
+	@RequestMapping(value = "/viajes/agregarPasajero/{viajeId}/{pasajeroId}", method = RequestMethod.PUT, produces = "application/json", headers = "Accept=application/json")
+	public String agregarPasajero(@PathVariable(value = "viajeId")Long viajeId, @PathVariable(value = "pasajeroId") Long pasajeroId) {
 		
 		GenericBO<Pasajero> pasajeroBO = getGenericBO(DAOFactory.getPasajeroDAO());	
 		GenericBO<Viaje> viajeBO = getGenericBO(DAOFactory.getViajeDAO());		
@@ -200,7 +213,7 @@ public class MuberRestController {
 			return JsonUtil.generateJson("OK", "No se encontró el pasajero");
 		else{
 			Viaje viaje = viajeBO.get(viajeId);
-			if(pasajero == null || "".equals(pasajero))			
+			if(viaje == null || "".equals(viaje))			
 				return JsonUtil.generateJson("OK", "No se encontró el viaje");
 			else{
 				viaje.agregarPasajero(pasajero);
@@ -279,25 +292,30 @@ public class MuberRestController {
 	
 	/**
 	 * Cargar crédito a un pasajero en particular
-	 * curl -X PUT http://localhost:8080/MuberRESTful/rest/services/pasajeros/cargarCredito?pasajeroId=4&monto=4000
+	 * curl -X PUT http://localhost:8080/MuberRESTful/rest/services/pasajeros/cargarCredito/3/4000
 	 * @param pasajeroId
 	 * @param monto
 	 * @return Json
 	 */
-	@RequestMapping(value = "/pasajeros/cargarCredito", method = RequestMethod.PUT, produces = "application/json")
-	public String cargarCredito(@PathParam(value="pasajeroId")Long pasajeroId, @PathParam(value="monto") double monto) {
+
+	@RequestMapping(value = "/pasajeros/cargarCredito/{pasajeroId}/{monto}",	
+			method = RequestMethod.PUT, 
+			produces = "application/json")
+	public String cargarCredito(@PathVariable("pasajeroId") Long pasajeroId,@PathVariable("monto") String monto) {
 		GenericBO<Pasajero> pasajeroBO = getGenericBO(DAOFactory.getPasajeroDAO());		
 
 		Pasajero pasajero =pasajeroBO.get(pasajeroId);
 		if(pasajero == null || "".equals(pasajero))			
 				return JsonUtil.generateJson("OK", "No se encontró el pasajero");
 		else{
-			pasajero.agregarCredito(monto);
+			double credito = Double.valueOf(monto);
+			pasajero.agregarCredito(credito);
 			pasajeroBO.save(pasajero);
 			return JsonUtil.generateJson("OK", "Se agregó crédito al pasajero");
 			
 		}
 	}
+	
 	
 	/**
 	 * Lista los 10 conductores mejor calificados que no tengan viajes abiertos registrados
